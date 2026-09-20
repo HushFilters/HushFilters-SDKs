@@ -1,0 +1,1288 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HushFilter API",
+    "description": "Bloom filter based credential membership checking API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Root",
+        "description": "Root endpoint with API information.",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui-check": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Ui Check Redirect",
+        "description": "Redirect /ui-check to the static check UI root.",
+        "operationId": "ui_check_redirect_ui_check_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui-check/": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Ui Check Page",
+        "description": "Render the check UI root page.",
+        "operationId": "ui_check_page_ui_check__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui-sync": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Ui Sync Redirect",
+        "description": "Redirect /ui-sync to the static sync UI root.",
+        "operationId": "ui_sync_redirect_ui_sync_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ui-sync/": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Ui Sync Page",
+        "description": "Render the sync UI root page.",
+        "operationId": "ui_sync_page_ui_sync__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Health",
+        "description": "Health check endpoint.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Get Stats",
+        "description": "Get statistics about loaded filters.",
+        "operationId": "get_stats_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check": {
+      "post": {
+        "tags": [
+          "Check"
+        ],
+        "summary": "Check Credential",
+        "description": "Check if a single credential exists in the bloom filter(s).\n\nReturns information about whether the credential was found and in which filters.",
+        "operationId": "check_credential_check_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Check"
+        ],
+        "summary": "Check Credential Get",
+        "description": "Check if a single credential exists in the bloom filter(s) via GET request.\n\nUseful for simple URL-based queries.",
+        "operationId": "check_credential_get_check_get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Username to check",
+              "title": "Username"
+            },
+            "description": "Username to check"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Password to check (optional)",
+              "default": "",
+              "title": "Password"
+            },
+            "description": "Password to check (optional)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check/batch": {
+      "post": {
+        "tags": [
+          "Check"
+        ],
+        "summary": "Check Credentials Batch",
+        "description": "Check multiple credentials in a single request.\n\nEfficiently checks multiple username/password combinations.",
+        "operationId": "check_credentials_batch_check_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchCheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkhash": {
+      "post": {
+        "tags": [
+          "Check"
+        ],
+        "summary": "Check Precomputed Sha256",
+        "description": "Check a single precomputed SHA-256 hash for membership in the loaded filter(s).\n\nThe provided hash is converted into Bloom probe positions using Murmur3 double-hashing.",
+        "operationId": "check_precomputed_sha256_checkhash_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SingleHashCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/checkhash/batch": {
+      "post": {
+        "tags": [
+          "Check"
+        ],
+        "summary": "Check Precomputed Sha256 Batch",
+        "description": "Check multiple precomputed SHA-256 hashes in a single request.\n\nReturns only the hashes that were found in at least one loaded filter.",
+        "operationId": "check_precomputed_sha256_batch_checkhash_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchHashCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchHashCheckResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/filters": {
+      "post": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Sync Filters Endpoint",
+        "description": "Download, verify, and extract filters from nWebbed storage.",
+        "operationId": "sync_filters_endpoint_sync_filters_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncFiltersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/apply": {
+      "post": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Sync Apply Endpoint",
+        "description": "Start filter sync, manifest update, and filter reload in a background thread.",
+        "operationId": "sync_apply_endpoint_sync_apply_post",
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncApplyStartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/manifest": {
+      "post": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Update Manifest Endpoint",
+        "description": "Regenerate manifest.json from the local filters directory.",
+        "operationId": "update_manifest_endpoint_sync_manifest_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManifestUpdateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/reload": {
+      "post": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Reload Filters Endpoint",
+        "description": "Reload manifest/filter files into memory without restarting the API process.",
+        "operationId": "reload_filters_endpoint_sync_reload_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReloadFiltersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/status": {
+      "get": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Sync Status Endpoint",
+        "description": "Return live logs for the current or most recent sync operation.",
+        "operationId": "sync_status_endpoint_sync_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync/auto-update": {
+      "get": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Auto Update Status Endpoint",
+        "description": "Return scheduler settings, its next run, and recent manual/automatic sync history.",
+        "operationId": "auto_update_status_endpoint_sync_auto_update_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoUpdateStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Update Auto Update Config Endpoint",
+        "description": "Enable, disable, or reschedule automatic updates without restarting the API.",
+        "operationId": "update_auto_update_config_endpoint_sync_auto_update_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoUpdateConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoUpdateStatusResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AutoUpdateConfigRequest": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "hour": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 23.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hour"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enabled"
+        ],
+        "title": "AutoUpdateConfigRequest",
+        "description": "Runtime configuration for the daily automatic update."
+      },
+      "AutoUpdateRun": {
+        "properties": {
+          "triggered_at": {
+            "type": "string",
+            "title": "Triggered At"
+          },
+          "completed_at": {
+            "type": "string",
+            "title": "Completed At"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "trigger": {
+            "type": "string",
+            "title": "Trigger",
+            "default": "scheduled"
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation",
+            "default": "sync_apply"
+          },
+          "filter_count": {
+            "type": "integer",
+            "title": "Filter Count",
+            "default": 0
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "downloaded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Downloaded"
+          },
+          "redownloaded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Redownloaded"
+          },
+          "verified_existing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Verified Existing"
+          }
+        },
+        "type": "object",
+        "required": [
+          "triggered_at",
+          "completed_at",
+          "status"
+        ],
+        "title": "AutoUpdateRun",
+        "description": "Summary for one manual or scheduled sync attempt."
+      },
+      "AutoUpdateStatusResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "hour": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hour"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone"
+          },
+          "current_time": {
+            "type": "string",
+            "title": "Current Time"
+          },
+          "next_update_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Update At"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": false
+          },
+          "active_since": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Since"
+          },
+          "live_logs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Live Logs"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/AutoUpdateRun"
+            },
+            "type": "array",
+            "title": "History"
+          }
+        },
+        "type": "object",
+        "required": [
+          "enabled",
+          "timezone",
+          "current_time"
+        ],
+        "title": "AutoUpdateStatusResponse",
+        "description": "Current scheduler configuration, live status, and recent sync runs."
+      },
+      "BatchCheckRequest": {
+        "properties": {
+          "credentials": {
+            "items": {
+              "$ref": "#/components/schemas/CheckRequest"
+            },
+            "type": "array",
+            "title": "Credentials",
+            "description": "List of credentials to check"
+          }
+        },
+        "type": "object",
+        "required": [
+          "credentials"
+        ],
+        "title": "BatchCheckRequest",
+        "description": "Request model for batch credential check."
+      },
+      "BatchCheckResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "found_usernames": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Found Usernames"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "found_usernames"
+        ],
+        "title": "BatchCheckResponse",
+        "description": "Response model for batch credential check."
+      },
+      "BatchHashCheckRequest": {
+        "properties": {
+          "hashes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hashes",
+            "description": "List of SHA-256 hashes (64-character hex strings)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hashes"
+        ],
+        "title": "BatchHashCheckRequest",
+        "description": "Request model for batch SHA-256 hash checks."
+      },
+      "BatchHashCheckResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "found_hashes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Found Hashes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "found_hashes"
+        ],
+        "title": "BatchHashCheckResponse",
+        "description": "Response model for batch SHA-256 hash checks."
+      },
+      "CheckRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Username to check"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "description": "Password to check (optional)",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "username"
+        ],
+        "title": "CheckRequest",
+        "description": "Request model for single credential check."
+      },
+      "CheckResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "found": {
+            "type": "boolean",
+            "title": "Found"
+          },
+          "matching_filters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Matching Filters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "found",
+          "matching_filters"
+        ],
+        "title": "CheckResponse",
+        "description": "Response model for credential check."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ManifestUpdateResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "output_file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output File"
+          },
+          "filter_count": {
+            "type": "integer",
+            "title": "Filter Count",
+            "default": 0
+          },
+          "logs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Logs"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ManifestUpdateResponse",
+        "description": "Response model for manifest regeneration."
+      },
+      "ReloadFiltersResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "filter_count": {
+            "type": "integer",
+            "title": "Filter Count",
+            "default": 0
+          },
+          "filters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Filters"
+          },
+          "max_nk": {
+            "type": "integer",
+            "title": "Max Nk",
+            "default": 0
+          },
+          "logs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Logs"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "ReloadFiltersResponse",
+        "description": "Response model for reloading filters into memory."
+      },
+      "SingleHashCheckRequest": {
+        "properties": {
+          "hash": {
+            "type": "string",
+            "title": "Hash",
+            "description": "Single SHA-256 hash (64-character hex string)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hash"
+        ],
+        "title": "SingleHashCheckRequest",
+        "description": "Request model for single precomputed SHA-256 hash check."
+      },
+      "StatsResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "filter_count": {
+            "type": "integer",
+            "title": "Filter Count"
+          },
+          "filters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Filters"
+          },
+          "max_nk": {
+            "type": "integer",
+            "title": "Max Nk"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filter_count",
+          "filters",
+          "max_nk"
+        ],
+        "title": "StatsResponse",
+        "description": "Response model for stats endpoint."
+      },
+      "SyncApplyStartResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "started": {
+            "type": "boolean",
+            "title": "Started"
+          },
+          "operation": {
+            "type": "string",
+            "title": "Operation"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "started",
+          "operation"
+        ],
+        "title": "SyncApplyStartResponse",
+        "description": "Response model for starting the background sync/apply sequence."
+      },
+      "SyncFiltersResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manifest Path"
+          },
+          "downloaded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Downloaded"
+          },
+          "redownloaded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Redownloaded"
+          },
+          "verified_existing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Verified Existing"
+          },
+          "logs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Logs"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "SyncFiltersResponse",
+        "description": "Response model for filter sync operations."
+      },
+      "SyncStatusResponse": {
+        "properties": {
+          "test_mode": {
+            "type": "boolean",
+            "title": "Test Mode"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active"
+          },
+          "operation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operation"
+          },
+          "logs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Logs"
+          },
+          "success": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Success"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "manifest_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manifest Path"
+          },
+          "output_file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output File"
+          },
+          "downloaded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Downloaded"
+          },
+          "redownloaded": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Redownloaded"
+          },
+          "verified_existing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Verified Existing"
+          },
+          "filter_count": {
+            "type": "integer",
+            "title": "Filter Count",
+            "default": 0
+          },
+          "filters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Filters"
+          },
+          "max_nk": {
+            "type": "integer",
+            "title": "Max Nk",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "active"
+        ],
+        "title": "SyncStatusResponse",
+        "description": "Response model for live sync status polling."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

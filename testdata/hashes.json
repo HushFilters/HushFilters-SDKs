@@ -1,0 +1,32 @@
+[
+  {
+    "username": "testusername1@nwebbed.com",
+    "password": "testpassword1",
+    "hash": "29f33573df6d1c7aac289e5c75e0bce5e4939e69c0499fb7e2540b7f371c59d9"
+  },
+  {
+    "username": "",
+    "password": "",
+    "hash": "474765d15c71d1c07b6a09f55ac21ab16a117b50c2f5d50f3130b38a394e52c6"
+  },
+  {
+    "username": "username",
+    "password": "",
+    "hash": "33a028296c0e01a0f19fedee17cc542b1e7b28d0140c31d1142146c2c3d95a81"
+  },
+  {
+    "username": " user@example.com ",
+    "password": " PaSs ",
+    "hash": "6ee4a1b2ff8e4c5d24bd464adf8ac5cceddbef8d0f2ade84020bf64a5bd772cc"
+  },
+  {
+    "username": "café🔒",
+    "password": "密碼🚀",
+    "hash": "e9ac4f88ed9aed6a5323bbc32952a87b33ed037e99ced78663e060ac0f97d921"
+  },
+  {
+    "username": "café",
+    "password": "\u0000\n",
+    "hash": "10a95b8dd63c1663cb994dbace908a42d32083fc1379526827ce6275461b9bdc"
+  }
+]

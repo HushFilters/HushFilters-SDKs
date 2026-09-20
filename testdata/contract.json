@@ -1,0 +1,18 @@
+[
+  {"python":"info","typescript":"info","method":"GET","path":"/","args":[],"response":{"name":"HushFilter API","version":"1.0.0","endpoints":{"health":"/health"},"test_mode":true}},
+  {"python":"health","typescript":"health","method":"GET","path":"/health","args":[],"response":{"status":"healthy","filters_loaded":2,"test_mode":true}},
+  {"python":"stats","typescript":"stats","method":"GET","path":"/stats","args":[],"response":{"filter_count":2,"filters":["a.hf","b.hf"],"max_nk":10,"test_mode":true}},
+  {"python":"check","typescript":"check","method":"POST","path":"/check","args":["person+tag@example.com","p&=密碼"],"body":{"username":"person+tag@example.com","password":"p&=密碼"},"response":{"found":true,"matching_filters":["a.hf"],"test_mode":true}},
+  {"python":"check_get","typescript":"checkGet","method":"GET","path":"/check","args":["person+tag@example.com","p&=密碼"],"query":{"username":"person+tag@example.com","password":"p&=密碼"},"response":{"found":false,"matching_filters":[],"test_mode":true}},
+  {"python":"check_batch","typescript":"checkBatch","method":"POST","path":"/check/batch","args":[[{"username":"one","password":"two"},{"username":"three"}]],"body":{"credentials":[{"username":"one","password":"two"},{"username":"three"}]},"response":{"total":2,"found_usernames":["one"],"test_mode":true}},
+  {"python":"check_hash","typescript":"checkHash","method":"POST","path":"/checkhash","args":["29f33573df6d1c7aac289e5c75e0bce5e4939e69c0499fb7e2540b7f371c59d9"],"body":{"hash":"29f33573df6d1c7aac289e5c75e0bce5e4939e69c0499fb7e2540b7f371c59d9"},"response":{"found":true,"matching_filters":["a.hf"],"test_mode":true}},
+  {"python":"check_hash_batch","typescript":"checkHashBatch","method":"POST","path":"/checkhash/batch","args":[[]],"body":{"hashes":[]},"response":{"total":0,"found_hashes":[],"test_mode":true}},
+  {"python":"sync_apply","typescript":"syncApply","method":"POST","path":"/sync/apply","args":[],"status":202,"response":{"started":true,"operation":"sync_apply","detail":"Background sync/apply started","test_mode":true}},
+  {"python":"sync_filters","typescript":"syncFilters","method":"POST","path":"/sync/filters","args":[],"response":{"success":true,"manifest_path":"filters/manifest_current.json","downloaded":["filters/one.zip"],"redownloaded":[],"verified_existing":[],"logs":["INFO synced"],"detail":null,"test_mode":true}},
+  {"python":"update_manifest","typescript":"updateManifest","method":"POST","path":"/sync/manifest","args":[],"response":{"success":true,"output_file":"manifest.json","filter_count":2,"logs":[],"detail":null,"test_mode":true}},
+  {"python":"reload_filters","typescript":"reloadFilters","method":"POST","path":"/sync/reload","args":[],"response":{"success":true,"filter_count":2,"filters":["a.hf","b.hf"],"max_nk":10,"logs":[],"detail":null,"test_mode":true}},
+  {"python":"sync_status","typescript":"syncStatus","method":"GET","path":"/sync/status","args":[],"response":{"active":false,"operation":"sync_apply","success":true,"logs":[],"detail":null,"test_mode":true}},
+  {"python":"auto_update_status","typescript":"autoUpdateStatus","method":"GET","path":"/sync/auto-update","args":[],"response":{"enabled":false,"hour":null,"timezone":"UTC","current_time":"2026-09-20T00:00:00+00:00","history":[],"test_mode":true}},
+  {"python":"configure_auto_update","typescript":"configureAutoUpdate","method":"PUT","path":"/sync/auto-update","args":[true,23],"body":{"enabled":true,"hour":23},"response":{"enabled":true,"hour":23,"timezone":"UTC","current_time":"2026-09-20T00:00:00+00:00","next_update_at":"2026-09-20T23:00:00+00:00","history":[],"test_mode":true}}
+]
+
