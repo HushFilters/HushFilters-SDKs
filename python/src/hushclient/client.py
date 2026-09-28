@@ -100,7 +100,7 @@ class HushClient:
         return payload
 
     def info(self) -> models.RootResponse:
-        return cast(models.RootResponse, self._request("GET", "/"))
+        return cast(models.RootResponse, self._request("GET", "/endpoints"))
 
     def health(self) -> models.HealthResponse:
         return cast(models.HealthResponse, self._request("GET", "/health"))
@@ -168,4 +168,3 @@ class HushClient:
                     raise SyncFailedError(status)
                 return status
             time.sleep(min(poll_interval, max(0, deadline - time.monotonic())))
-

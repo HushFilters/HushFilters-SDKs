@@ -12,8 +12,26 @@
           "General"
         ],
         "summary": "Root",
-        "description": "Root endpoint with API information.",
+        "description": "Hushfilters home page with product information and navigation.",
         "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/endpoints": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Endpoints",
+        "description": "API information and endpoint directory.",
+        "operationId": "endpoints_endpoints_get",
         "responses": {
           "200": {
             "description": "Successful Response",

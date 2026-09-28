@@ -28,6 +28,8 @@ class Handler(BaseHTTPRequestHandler):
             "body": json.loads(raw) if raw else None, "headers": self.headers,
         })
         reply = self.server.replies.pop(0) if self.server.replies else {"body": {"active": True}}
+        if hasattr(self.server, "routes"):
+            reply = self.server.routes.get(urlsplit(self.path).path, {"status": 404})
         time.sleep(reply.get("delay", 0))
         data = reply.get("raw", json.dumps(reply.get("body", {}))).encode("utf-8")
         try:
@@ -63,8 +65,21 @@ class ClientTests(unittest.TestCase):
     def test_contract_covers_every_json_operation(self):
         schema = json.loads((ROOT / "api/openapi.json").read_text(encoding="utf-8"))
         operations = {(m.upper(), p) for p, methods in schema["paths"].items()
-                      if not p.startswith("/ui-") for m in methods}
+                      if not p.startswith("/ui-") for m, operation in methods.items()
+                      if any("application/json" in response.get("content", {})
+                             for status, response in operation.get("responses", {}).items()
+                             if status.startswith("2"))}
         self.assertEqual(operations, {(c["method"], c["path"]) for c in CASES})
+
+    def test_info_uses_json_directory_when_home_is_html(self):
+        expected = {"name": "HushFilter API", "version": "1.0.0",
+                    "endpoints": {"home": "/", "endpoints": "/endpoints"}, "test_mode": False}
+        self.server.routes = {
+            "/prefix/": {"raw": "<html>Hushfilters home</html>"},
+            "/prefix/endpoints": {"body": expected},
+        }
+        self.assertEqual(self.client.info(), expected)
+        self.assertEqual([r["url"].path for r in self.server.received], ["/prefix/endpoints"])
 
     def test_optional_password_and_empty_batches(self):
         self.server.replies = [{"body": {}}] * 4
@@ -184,4 +199,3 @@ for case in CASES:
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -17,7 +17,9 @@ async function setup(t) {
     const raw = Buffer.concat(chunks).toString("utf8");
     state.requests.push({ method: req.method, url: new URL(req.url, "http://localhost"),
       body: raw ? JSON.parse(raw) : undefined, headers: req.headers });
-    const reply = state.replies.shift() ?? { body: { active: true } };
+    const reply = state.routes
+      ? state.routes[new URL(req.url, "http://localhost").pathname] ?? { status: 404 }
+      : state.replies.shift() ?? { body: { active: true } };
     if (reply.delay) await new Promise(resolve => setTimeout(resolve, reply.delay));
     res.writeHead(reply.status ?? 200, { "content-type": "application/json", ...reply.headers });
     res.end(reply.raw ?? JSON.stringify(reply.body ?? {}));
@@ -32,9 +34,25 @@ async function setup(t) {
 
 test("fixtures cover all JSON operations in the OpenAPI snapshot", () => {
   const schema = JSON.parse(readFileSync(new URL("../../api/openapi.json", import.meta.url), "utf8"));
-  const operations = Object.entries(schema.paths).filter(([p]) => !p.startsWith("/ui-"))
-    .flatMap(([p, methods]) => Object.keys(methods).map(m => `${m.toUpperCase()} ${p}`)).sort();
+  const operations = Object.entries(schema.paths)
+    .filter(([p]) => !p.startsWith("/ui-"))
+    .flatMap(([p, methods]) => Object.entries(methods)
+      .filter(([, operation]) => Object.entries(operation.responses ?? {})
+        .some(([status, response]) => status.startsWith("2") && response.content?.["application/json"]))
+      .map(([m]) => `${m.toUpperCase()} ${p}`)).sort();
   assert.deepEqual(cases.map(c => `${c.method} ${c.path}`).sort(), operations);
+});
+
+test("info uses the JSON directory when home is HTML", async t => {
+  const s = await setup(t);
+  const expected = { name: "HushFilter API", version: "1.0.0",
+    endpoints: { home: "/", endpoints: "/endpoints" }, test_mode: false };
+  s.routes = {
+    "/prefix/": { raw: "<html>Hushfilters home</html>" },
+    "/prefix/endpoints": { body: expected },
+  };
+  assert.deepEqual(await s.client.info(), expected);
+  assert.deepEqual(s.requests.map(r => r.url.pathname), ["/prefix/endpoints"]);
 });
 
 for (const c of cases) {
@@ -174,4 +192,3 @@ test("hash vectors match Python, including unicode and whitespace", () => {
   assert.equal(credentialHash("testusername1@nwebbed.com", "testpassword1"),
     "29f33573df6d1c7aac289e5c75e0bce5e4939e69c0499fb7e2540b7f371c59d9");
 });
-

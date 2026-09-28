@@ -104,7 +104,7 @@ Local development can explicitly use `verifyTls: false`, or `HUSHCLIENT_INSECURE
 
 | Method | Promise result type |
 | --- | --- |
-| `info()` | `RootResponse` |
+| `info()` (GET `/endpoints`) | `RootResponse` |
 | `health()` | `HealthResponse` |
 | `stats()` | `StatsResponse` |
 | `check(username, password="")` | `CheckResponse` |

@@ -1,5 +1,21 @@
 # Validation record
 
+## Information endpoint compatibility fix — 2026-09-29
+
+Both SDKs now request `GET /endpoints` for `info()`, matching HushClient source commit `3b9288802d856f49ed875b39927c185994a4b1e6`. The public `RootResponse` type remains unchanged. A regression test in each language serves HTML at the home route and JSON at the information route, including a base-URL prefix.
+
+Validated on Windows with Python 3.13.5 and Node.js 22.17.1:
+
+- Python offline tests: 28 passed.
+- Node.js offline tests: 28 passed.
+- Python strict mypy, generated-model freshness, and TypeScript/example type checks: passed.
+- Python source distribution and wheel built successfully in an isolated build environment; npm archive built successfully.
+- Live integration validation was attempted but could not complete: no service accepted connections at `https://localhost:443`, including a connection check outside the sandbox. No service was started and no filters or schedules were changed.
+
+The earlier live results below describe the original implementation, not a live revalidation of this fix.
+
+## Original validation — 2026-09-20
+
 Validated on **2026-09-20** on Windows using Python **3.13.5**, Node.js **22.17.1**, TypeScript **5.9.3**, and mypy **1.20.2**.
 
 The live target was `https://localhost`, API version `1.0.0`, with **512 filters loaded** and `test_mode=false`. Both SDKs used `HushClient/tls/public/fullchain.pem` as explicit trust material, with certificate and hostname verification enabled. No private keys or certificates are stored in this repository.

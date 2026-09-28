@@ -62,7 +62,7 @@ Responses keep the API's original `snake_case` JSON field names in both language
 
 | API operation | Python | TypeScript |
 | --- | --- | --- |
-| `GET /` | `info()` | `info()` |
+| `GET /endpoints` | `info()` | `info()` |
 | `GET /health` | `health()` | `health()` |
 | `GET /stats` | `stats()` | `stats()` |
 | `POST /check` | `check(username, password="")` | `check(username, password="")` |
@@ -78,7 +78,7 @@ Responses keep the API's original `snake_case` JSON field names in both language
 | `GET /sync/auto-update` | `auto_update_status()` | `autoUpdateStatus()` |
 | `PUT /sync/auto-update` | `configure_auto_update(enabled, hour=None)` | `configureAutoUpdate(enabled, hour=null)` |
 
-HTML pages (`/docs`, `/ui-check`, `/ui-sync`) and static assets are browser interfaces, not SDK methods.
+HTML pages (`/`, `/docs`, `/ui-check`, `/ui-sync`) and static assets are browser interfaces, not SDK methods. `info()` uses the JSON directory at `/endpoints`; servers predating that route must be upgraded. The `RootResponse` type name is retained for source compatibility.
 
 ## API behavior to know
 

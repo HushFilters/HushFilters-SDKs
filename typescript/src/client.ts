@@ -129,7 +129,7 @@ export class HushClient {
     });
   }
 
-  info(options?: RequestOptions): Promise<Models.RootResponse> { return this.request("GET", "/", undefined, options); }
+  info(options?: RequestOptions): Promise<Models.RootResponse> { return this.request("GET", "/endpoints", undefined, options); }
   health(options?: RequestOptions): Promise<Models.HealthResponse> { return this.request("GET", "/health", undefined, options); }
   stats(options?: RequestOptions): Promise<Models.StatsResponse> { return this.request("GET", "/stats", undefined, options); }
   check(username: string, password = "", options?: RequestOptions): Promise<Models.CheckResponse> {
@@ -195,4 +195,3 @@ export class HushClient {
     }
   }
 }
-

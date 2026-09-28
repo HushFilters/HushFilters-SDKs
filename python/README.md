@@ -83,7 +83,7 @@ Local development can explicitly use `HushClient(verify_tls=False)`, or `HUSHCLI
 
 | Method | Returns |
 | --- | --- |
-| `info()` | `models.RootResponse` |
+| `info()` (GET `/endpoints`) | `models.RootResponse` |
 | `health()` | `models.HealthResponse` |
 | `stats()` | `models.StatsResponse` |
 | `check(username, password="")` | `models.CheckResponse` |
